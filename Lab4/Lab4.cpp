@@ -4,7 +4,7 @@
 #include<string.h>
 #include"Lab4.h"
 HMENU hmenu, hpopup, hpopup2;
-char szAppName[] = _T("calendar");
+char szAppName[] = "calendar";
 HWND hCB, hLB, hCY, hE, hT;
 char Buf1[80], Buf[80];
 HINSTANCE hInstance;

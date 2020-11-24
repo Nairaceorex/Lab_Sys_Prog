@@ -1,180 +1,118 @@
-﻿// Lab6.cpp : Определяет точку входа для приложения.
-//
+﻿#define _CRT_SECURE_NO_WARNINGS
+#include<Windows.h>
+#include<tchar.h>
+#include "Resource.h"
+#define ID_STDDIALOG 11
+#define IDC_HSCR -1
+#define IDC_VSCR -2
+INT_PTR CALLBACK Dialog1(HWND, UINT, WPARAM, LPARAM);
 
-#include "framework.h"
-#include "Lab6.h"
+LPCWSTR combo[] = { _T("aa"),_T("bb"),_T("cc") };
+TCHAR WinName[] = _T("MainFrame");
+HINSTANCE hInst;
+LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
+int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow) {
+	HWND hwnd;
+	MSG msg;
+	WNDCLASSEX wc;
+	hInst = hInstance;
+	wc.cbSize = sizeof(wc);
+	wc.style = CS_HREDRAW | CS_VREDRAW;
+	wc.lpfnWndProc = WndProc;
+	wc.cbClsExtra = 0;
+	wc.cbWndExtra = 0;
+	wc.hInstance = hInstance;
+	wc.hIcon = LoadIcon(NULL, IDI_APPLICATION);
+	wc.hCursor = LoadCursor(NULL, IDC_ARROW);
+	wc.hbrBackground = (HBRUSH)GetStockObject(WHITE_BRUSH);
+	wc.lpszMenuName = NULL;
+	wc.lpszClassName = WinName;
+	wc.hIconSm = LoadIcon(NULL, IDI_APPLICATION);
+	//Регистрируем класс окна
+	if (!RegisterClassEx(&wc)) return 0;
+	hwnd = CreateWindow(WinName, _T("Dialog"),
+		WS_OVERLAPPEDWINDOW,
+		CW_USEDEFAULT, CW_USEDEFAULT,
+		CW_USEDEFAULT, CW_USEDEFAULT,
+		HWND_DESKTOP, NULL, hInstance, NULL);
+	//Показываем окно
+	ShowWindow(hwnd, nCmdShow);
 
-#define MAX_LOADSTRING 100
+	//UpdateWindow(hMainWnd);
+	//Выполняем цикл обработки сообщений до закрытия окна
+	while (GetMessage(&msg, NULL, 0, 0)) {
+		TranslateMessage(&msg);
+		DispatchMessageW(&msg);
+	}
+	return 0;
 
-// Глобальные переменные:
-HINSTANCE hInst;                                // текущий экземпляр
-WCHAR szTitle[MAX_LOADSTRING];                  // Текст строки заголовка
-WCHAR szWindowClass[MAX_LOADSTRING];            // имя класса главного окна
-
-// Отправить объявления функций, включенных в этот модуль кода:
-ATOM                MyRegisterClass(HINSTANCE hInstance);
-BOOL                InitInstance(HINSTANCE, int);
-LRESULT CALLBACK    WndProc(HWND, UINT, WPARAM, LPARAM);
-INT_PTR CALLBACK    About(HWND, UINT, WPARAM, LPARAM);
-
-int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
-                     _In_opt_ HINSTANCE hPrevInstance,
-                     _In_ LPWSTR    lpCmdLine,
-                     _In_ int       nCmdShow)
-{
-    UNREFERENCED_PARAMETER(hPrevInstance);
-    UNREFERENCED_PARAMETER(lpCmdLine);
-
-    // TODO: Разместите код здесь.
-
-    // Инициализация глобальных строк
-    LoadStringW(hInstance, IDS_APP_TITLE, szTitle, MAX_LOADSTRING);
-    LoadStringW(hInstance, IDC_LAB6, szWindowClass, MAX_LOADSTRING);
-    MyRegisterClass(hInstance);
-
-    // Выполнить инициализацию приложения:
-    if (!InitInstance (hInstance, nCmdShow))
-    {
-        return FALSE;
-    }
-
-    HACCEL hAccelTable = LoadAccelerators(hInstance, MAKEINTRESOURCE(IDC_LAB6));
-
-    MSG msg;
-
-    // Цикл основного сообщения:
-    while (GetMessage(&msg, nullptr, 0, 0))
-    {
-        if (!TranslateAccelerator(msg.hwnd, hAccelTable, &msg))
-        {
-            TranslateMessage(&msg);
-            DispatchMessage(&msg);
-        }
-    }
-
-    return (int) msg.wParam;
 }
 
-
-
-//
-//  ФУНКЦИЯ: MyRegisterClass()
-//
-//  ЦЕЛЬ: Регистрирует класс окна.
-//
-ATOM MyRegisterClass(HINSTANCE hInstance)
-{
-    WNDCLASSEXW wcex;
-
-    wcex.cbSize = sizeof(WNDCLASSEX);
-
-    wcex.style          = CS_HREDRAW | CS_VREDRAW;
-    wcex.lpfnWndProc    = WndProc;
-    wcex.cbClsExtra     = 0;
-    wcex.cbWndExtra     = 0;
-    wcex.hInstance      = hInstance;
-    wcex.hIcon          = LoadIcon(hInstance, MAKEINTRESOURCE(IDI_LAB6));
-    wcex.hCursor        = LoadCursor(nullptr, IDC_ARROW);
-    wcex.hbrBackground  = (HBRUSH)(COLOR_WINDOW+1);
-    wcex.lpszMenuName   = MAKEINTRESOURCEW(IDC_LAB6);
-    wcex.lpszClassName  = szWindowClass;
-    wcex.hIconSm        = LoadIcon(wcex.hInstance, MAKEINTRESOURCE(IDI_SMALL));
-
-    return RegisterClassExW(&wcex);
+LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
+	PAINTSTRUCT ps;
+	HDC hdc;
+	TCHAR str[256];
+	int i;
+	HMENU hMenu, hPopupMenu;
+	TCHAR str0[] = _T("Диалог");
+	TCHAR str1[] = _T("Открыть");
+	switch (uMsg) {
+	case WM_COMMAND:
+		switch (LOWORD(wParam)) {
+		case ID_STDDIALOG:
+			DialogBox(hInst, MAKEINTRESOURCE(IDD_ABOUTBOX), hWnd, Dialog1);
+			return 0;
+		default: return DefWindowProc(hWnd, uMsg, wParam, lParam);
+		}
+		break;
+	case WM_CREATE:
+		hMenu = CreateMenu();
+		hPopupMenu = CreatePopupMenu();
+		AppendMenu(hPopupMenu, MF_STRING, ID_STDDIALOG, str1);
+		AppendMenu(hMenu, MF_POPUP, (UINT)hPopupMenu, str0);
+		SetMenu(hWnd, hMenu);
+		break;
+	case WM_DESTROY:
+		PostQuitMessage(0);
+		break;
+	}
+	return DefWindowProc(hWnd, uMsg, wParam, lParam);
 }
 
-//
-//   ФУНКЦИЯ: InitInstance(HINSTANCE, int)
-//
-//   ЦЕЛЬ: Сохраняет маркер экземпляра и создает главное окно
-//
-//   КОММЕНТАРИИ:
-//
-//        В этой функции маркер экземпляра сохраняется в глобальной переменной, а также
-//        создается и выводится главное окно программы.
-//
-BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
+INT_PTR CALLBACK Dialog1(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
-   hInst = hInstance; // Сохранить маркер экземпляра в глобальной переменной
-
-   HWND hWnd = CreateWindowW(szWindowClass, szTitle, WS_OVERLAPPEDWINDOW,
-      CW_USEDEFAULT, 0, CW_USEDEFAULT, 0, nullptr, nullptr, hInstance, nullptr);
-
-   if (!hWnd)
-   {
-      return FALSE;
-   }
-
-   ShowWindow(hWnd, nCmdShow);
-   UpdateWindow(hWnd);
-
-   return TRUE;
+	HBRUSH hBrushBk = CreateSolidBrush(RGB(149, 123, 141));
+	HBRUSH hBrushStatic = CreateSolidBrush(RGB(149, 123, 141));
+	static HWND hWndComboBox;
+	TCHAR arr[] = _T("*.exe");
+	HDC hdc;
+	switch (uMsg) {
+	case WM_INITDIALOG:
+		DlgDirListComboBox(hDlg, arr, IDC_COMBO1, IDC_STATIC,
+			DDL_READWRITE | DDL_READONLY | DDL_HIDDEN |
+			DDL_SYSTEM | DDL_DIRECTORY | DDL_DRIVES |
+			DDL_ARCHIVE);
+		return TRUE;
+		
+		return TRUE;
+	case WM_COMMAND:
+		switch (LOWORD(wParam))
+		{
+		case IDC_BUTTON1: return EndDialog(hDlg, 0);
+		case IDCANCEL: return EndDialog(hDlg, 0);
+		}
+		return TRUE;
+	case WM_CTLCOLORDLG: return (LONG)hBrushBk;
+	case WM_CTLCOLORSTATIC:
+		hdc = (HDC)wParam;
+		SetTextColor(hdc, RGB(148, 0, 211));
+		return (LONG)hBrushStatic;
+	
+		
+	case WM_ERASEBKGND:
+		break;
+	default: return FALSE;
+	}
+	return FALSE;
 }
 
-//
-//  ФУНКЦИЯ: WndProc(HWND, UINT, WPARAM, LPARAM)
-//
-//  ЦЕЛЬ: Обрабатывает сообщения в главном окне.
-//
-//  WM_COMMAND  - обработать меню приложения
-//  WM_PAINT    - Отрисовка главного окна
-//  WM_DESTROY  - отправить сообщение о выходе и вернуться
-//
-//
-LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
-{
-    switch (message)
-    {
-    case WM_COMMAND:
-        {
-            int wmId = LOWORD(wParam);
-            // Разобрать выбор в меню:
-            switch (wmId)
-            {
-            case IDM_ABOUT:
-                DialogBox(hInst, MAKEINTRESOURCE(IDD_ABOUTBOX), hWnd, About);
-                break;
-            case IDM_EXIT:
-                DestroyWindow(hWnd);
-                break;
-            default:
-                return DefWindowProc(hWnd, message, wParam, lParam);
-            }
-        }
-        break;
-    case WM_PAINT:
-        {
-            PAINTSTRUCT ps;
-            HDC hdc = BeginPaint(hWnd, &ps);
-            // TODO: Добавьте сюда любой код прорисовки, использующий HDC...
-            EndPaint(hWnd, &ps);
-        }
-        break;
-    case WM_DESTROY:
-        PostQuitMessage(0);
-        break;
-    default:
-        return DefWindowProc(hWnd, message, wParam, lParam);
-    }
-    return 0;
-}
-
-// Обработчик сообщений для окна "О программе".
-INT_PTR CALLBACK About(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
-{
-    UNREFERENCED_PARAMETER(lParam);
-    switch (message)
-    {
-    case WM_INITDIALOG:
-        return (INT_PTR)TRUE;
-
-    case WM_COMMAND:
-        if (LOWORD(wParam) == IDOK || LOWORD(wParam) == IDCANCEL)
-        {
-            EndDialog(hDlg, LOWORD(wParam));
-            return (INT_PTR)TRUE;
-        }
-        break;
-    }
-    return (INT_PTR)FALSE;
-}

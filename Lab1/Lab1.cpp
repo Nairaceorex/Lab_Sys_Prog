@@ -1,12 +1,11 @@
-﻿#define _CRT_SECURE_NO_WORNINGS
+﻿
 #include<Windows.h>
 #include<tchar.h>
-#include <stdlib.h>
-#include <ctime>
+
 #include <windowsx.h>
 
 LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
-void DrawRectangle(HWND hwnd);
+
 int cx, cy;
 HBRUSH hPurpleBrush, hBlueBrush, hDBlueBrush;
 //==================================================================================

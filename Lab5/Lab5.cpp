@@ -2,8 +2,8 @@
 #include<Windows.h>
 #include<tchar.h>
 #include <cmath>
-const int WIDTH = 200;
-const int HEIGHT = 200;
+const int WIDTH = 100;
+const int HEIGHT = 300;
 
 
 int function(double x) {
@@ -72,7 +72,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam,
 
 	switch (uMsg) {
 	case WM_CREATE:
-		hpen1 = CreatePen(PS_SOLID, 2, RGB(0, 0, 255));
+		hpen1 = CreatePen(PS_SOLID, 3, RGB(0, 0, 255));
 		hpen2 = CreatePen(PS_SOLID, 0.5, RGB(255, 0, 255));
 		break;
 	case WM_SIZE:

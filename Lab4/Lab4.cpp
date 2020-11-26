@@ -43,12 +43,13 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	}
 	return ((int)msg.wParam);
 }
+
 LRESULT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
 	static HWND hwnded;
 	int i;
-	int date, month, year;
+	static int k = 0;
 	int maxx = 0, maxy = 0;
-	char day[2];
+	char day[10];
 	HBITMAP hbit;
 	switch (uMsg) {
 	case WM_CREATE:
@@ -56,17 +57,13 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
 		maxy = GetSystemMetrics(SM_CXSCREEN);
 		maxy = GetSystemMetrics(SM_CXSCREEN);
 		hCB = CreateWindow("ComboBox", NULL, WS_CHILD | WS_VISIBLE | WS_VSCROLL | CBS_DROPDOWNLIST | CBS_HASSTRINGS, 90, 80, 100, 200, hwnd, (HMENU)ID_COMBODAY, hInstance, NULL);
-		hT = CreateWindow("Button", "Выбрать", WS_CHILD | WS_VISIBLE, 90, 415, 100, 27, hwnd, (HMENU)ID_TAKE, hInstance, NULL);
-		hE = CreateWindow("Button", "Выход", WS_CHILD | WS_VISIBLE, 90, 450, 100, 27, hwnd, (HMENU)ID_EXIT, hInstance, NULL);
-		for (i = 1; i < 52; i++)
+		//hT = CreateWindow("Button", "Выбрать", WS_CHILD | WS_VISIBLE, 90, 415, 100, 27, hwnd, (HMENU)ID_TAKE, hInstance, NULL);
+		//hE = CreateWindow("Button", "Выход", WS_CHILD | WS_VISIBLE, 90, 450, 100, 27, hwnd, (HMENU)ID_EXIT, hInstance, NULL);
+		for (i = 10; i < 54; i++)
 		{
 			_itoa(i, day, 10);
-			SendMessage(hCB, CB_ADDSTRING, 1, (LPARAM)day);
+			SendMessage(hCB, CB_ADDSTRING, 0, (LPARAM)day);
 		}
-		SendMessage(hCB, CB_SETCURSEL, 0, 0L);
-
-
-
 		memdc = CreateCompatibleDC(hdc1);
 		hbit = CreateCompatibleBitmap(hdc1, maxx, maxy);
 		SelectObject(memdc, hbit);
@@ -78,7 +75,8 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
 		hdc1 = BeginPaint(hwnd, &ps);
 		SetTextColor(hdc1, RGB(255, 255, 67));
 		SetBkMode(hdc1, TRANSPARENT);
-		TextOut(hdc1, 85, 60, "Выберете число: ", 16);
+		_itoa(k, day, 10);
+		TextOut(hdc1, 85, 60, day, strlen(day));
 		memdc = CreateCompatibleDC(hdc1);
 		BitBlt(hdc1, 0, 0, maxx, maxy, memdc, 0, 0, SRCCOPY);
 		EndPaint(hwnd, &ps);
@@ -86,17 +84,13 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
 	case WM_COMMAND:
 		switch (LOWORD(wParam))
 		{
-		case ID_EXIT:
-			DestroyWindow(hwnd);
+		case ID_COMBODAY:
+			if (HIWORD(wParam)== CBN_SELENDOK) {
+				k = SendMessage(hCB, CB_GETCURSEL, 0, 0L) + 1;
+				InvalidateRect(hwnd, NULL, TRUE);
+			}
 			break;
-		case ID_TAKE:
-			date = SendMessage(hCB, CB_GETCURSEL, 0, 0L);
-			month = SendMessage(hLB, LB_GETCURSEL, 0, 0L);
-			year = SendMessage(hCY, CB_GETCURSEL, 0, 0L);
-			SendMessage(hCY, CB_GETLBTEXT, (WPARAM)year, (LPARAM)Buf1);
-			lstrcpy(Buf, ReturnDate(date, month, atoi(Buf1)));
-			MessageBox(NULL, Buf, _T(""), MB_OK);
-			break;
+		
 		}
 
 		break;
@@ -108,14 +102,4 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
 		return DefWindowProc(hwnd, uMsg, wParam, lParam);
 	}
 	return 0;
-}
-LPSTR ReturnDate(int day, int month, int year) {
-	char myDay[80] = "";
-	_itoa(day + 1, myDay, 10);
-	lstrcat(myDay, "-я строка ");
-
-	//Конкатенируем с годом
-
-	//Возвращаем готовую дату
-	return myDay;
 }

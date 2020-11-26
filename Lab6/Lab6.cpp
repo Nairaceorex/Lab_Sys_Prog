@@ -3,11 +3,11 @@
 #include<tchar.h>
 #include "Resource.h"
 #define ID_STDDIALOG 11
-#define IDC_HSCR -1
-#define IDC_VSCR -2
+//#define IDC_HSCR -1
+//#define IDC_VSCR -2
 INT_PTR CALLBACK Dialog1(HWND, UINT, WPARAM, LPARAM);
 
-LPCWSTR combo[] = { _T("aa"),_T("bb"),_T("cc") };
+//LPCWSTR combo[] = { _T("aa"),_T("bb"),_T("cc") };
 TCHAR WinName[] = _T("MainFrame");
 HINSTANCE hInst;
 LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);

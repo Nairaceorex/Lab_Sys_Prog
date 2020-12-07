@@ -2,8 +2,8 @@
 #include<Windows.h>
 #include<tchar.h>
 #include <cmath>
-const int WIDTH = 100;
-const int HEIGHT = 300;
+const int WIDTH = 200;
+const int HEIGHT = 2000;
 
 
 int function(double x) {
@@ -83,7 +83,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam,
 	case WM_PAINT:
 		hDC = BeginPaint(hWnd, &ps);
 		SetMapMode(hDC, MM_ANISOTROPIC);
-		SetWindowExtEx(hDC, 2 * WIDTH, 2 * HEIGHT, NULL);
+		SetWindowExtEx(hDC, WIDTH, HEIGHT, NULL);
 		SetViewportExtEx(hDC, sx / 2, sy / 2, NULL);
 		SetViewportOrgEx(hDC, sx / 2, sy / 2, NULL);
 		SelectObject(hDC, hpen1);
@@ -95,8 +95,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam,
 		MoveToEx(hDC, -WIDTH, 0, NULL);
 		for (x = -200; x <= 200; x += 1.0f / 100)
 		{
-			y = function(x);
-			LineTo(hDC, x, y * 50);
+			y = function(x) * 50;
+			LineTo(hDC, x, y );
 		}
 		EndPaint(hWnd, &ps);
 		break;

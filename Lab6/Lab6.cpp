@@ -84,14 +84,12 @@ INT_PTR CALLBACK Dialog1(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	HBRUSH hBrushBk = CreateSolidBrush(RGB(149, 123, 141));
 	HBRUSH hBrushStatic = CreateSolidBrush(RGB(149, 123, 141));
 	static HWND hWndComboBox;
-	TCHAR arr[] = _T("*.exe");
+	TCHAR arr[] = _T("exe//*.exe");
 	HDC hdc;
 	switch (uMsg) {
 	case WM_INITDIALOG:
 		DlgDirListComboBox(hDlg, arr, IDC_COMBO1, IDC_STATIC,
-			DDL_READWRITE | DDL_READONLY | DDL_HIDDEN |
-			DDL_SYSTEM | DDL_DIRECTORY | DDL_DRIVES |
-			DDL_ARCHIVE);
+			DDL_READWRITE);
 		return TRUE;
 		
 		return TRUE;
